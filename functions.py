@@ -1,13 +1,15 @@
+import discord
 import requests
 from datetime import datetime, timedelta
 
-async def contest_list(message):
+async def contest_list(ctx):
     url="https://codeforces.com/api/contest.list"
     res=requests.get(url)
     res=res.json()
     contests=res["result"]
 
     today=datetime.today()
+    ret=[]
     for contest in contests:
         id=contest["id"]
         name=contest["name"]
@@ -19,6 +21,11 @@ async def contest_list(message):
         start_day=startTime.day
         start_hour=startTime.hour
         start_minute=startTime.minute
-        await message.channel.send(f"{name} is at {start_hour}:{start_minute} on {start_day}/{start_month}/{start_year} for {timedelta(seconds = dur)} ")
+        details={}
+        details["name"]=name
+        details["start"]=f"{start_hour}:{start_minute}"
+        details["duration"]=timedelta(seconds=dur)
+        ret.append(details)
         if(startTime<today):
             break
+    return ret
