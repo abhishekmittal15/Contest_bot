@@ -5,7 +5,8 @@ from discord.ext.commands.core import command
 from functions import *
 from dotenv import load_dotenv
 load_dotenv()
-bot_token=os.getenv("DISCORD_TOKEN")
+# bot_token=os.getenv("DISCORD_TOKEN")
+bot_token="ODA5ODczMDQ0MTA0OTM3NTIz.YCbbDA.9mwJu9qWgMmQvfLXZ2s4DGfKsJ4"
 
 bot=commands.Bot(command_prefix="cf ")
 
