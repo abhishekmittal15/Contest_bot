@@ -16,10 +16,14 @@ bot=commands.Bot(command_prefix=";")
 #     print(f'{client.user} has connected to Discord!')
 
 @bot.command(name="contests",help="Lists the upcoming codeforces contests")
-async def on_message(ctx):
-    result1 = await cf_contest()
-    # result2 = await ac_contest(ctx)
-    await display_cf(ctx, result1)
-    # await ctx.send(result2)
+async def contests_info(ctx):
+    result_cf = await cf_contest()
+    await display_cf(ctx, result_cf)
+
+
+@bot.listen('on_ready')
+async def initialisation():
+    print("CONNECTED")
+
 
 bot.run(bot_token)

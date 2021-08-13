@@ -3,6 +3,9 @@ import requests
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+# fetch info functions
+
+# codeforces
 async def cf_contest():
     url="https://codeforces.com/api/contest.list"
     res=requests.get(url)
@@ -31,6 +34,7 @@ async def cf_contest():
             break
     return ret
 
+# atcoder
 async def ac_contest(ctx):
     url="https://atcoder.jp/contests/"
 
@@ -49,6 +53,7 @@ async def ac_contest(ctx):
         results.append(contest)
     return results
 
+# codechef
 async def cc_contest():
     url="https://www.codechef.com/api/list/contests/all?sort_by=END&sorting_order=desc&offset=0&mode=all"
     res=requests.get(url)
@@ -63,10 +68,25 @@ async def cc_contest():
         results.append(cc_contest)
     return results
 
+
+# display functions
+
+# display codeforces
 async def display_cf(ctx, result):
-    embedVar = discord.Embed(title="Title", description="Desc", color=0x00ff00)
-    embedVar.add_field(name="Field1", value="hi", inline=False)
-    embedVar.add_field(name="Field2", value="hi2", inline=False)
-    await ctx.send(embed=embedVar)
 
+    # await ctx.send(result[0])
 
+    for contest in result:
+        embedVar = discord.Embed(title=contest["name"], color=0x00ff00)
+        embedVar.add_field(name="Time", value=contest["time"], inline=False)
+
+        td = contest["duration"]
+
+        # days = td.days
+        hours = td.seconds // 3600
+        minutes = (td.seconds // 60) % 60
+        
+        duration = f"{hours} hr {minutes} min"
+
+        embedVar.add_field(name="Duration", value=duration, inline=False)
+        await ctx.send(embed=embedVar)
