@@ -23,8 +23,3 @@ async def on_message(ctx):
     # await ctx.send(result2)
 
 bot.run(bot_token)
-<<<<<<< HEAD:src/main.py
-=======
-
-Heyy there can u see this message ????
->>>>>>> f553c6a8cf25cb4211f144619b6941e5e91840c9:main.py
