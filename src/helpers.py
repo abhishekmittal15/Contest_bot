@@ -7,3 +7,9 @@ def convert_to_12hr(tm):
 def convert_to_date(s):
     datetime_object = datetime.strptime(s, '%d %b %Y %H:%M:%S')
     return datetime_object
+
+def get_duration(dur):
+    
+    hours = dur.seconds // 3600
+    minutes = (dur.seconds // 60) % 60
+    return f"{hours} hr {minutes} min"

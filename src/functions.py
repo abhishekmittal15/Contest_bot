@@ -68,8 +68,8 @@ async def cc_contest():
         cc_contest={}
         cc_contest['link']="https://www.codechef.com/"+contest['contest_code']
         cc_contest['name']=contest['contest_name']
-        cc_contest['time']=contest['contest_start_date']
-        cc_contest['duration']=contest['contest_end_date']
+        cc_contest['start_time']=contest['contest_start_date']
+        cc_contest['end_time']=contest['contest_end_date']
         results.append(cc_contest)
     return results
 
@@ -79,20 +79,14 @@ async def cc_contest():
 # display codeforces
 async def display_cf(ctx, result):
 
+    await ctx.send("Codeforces Contests:")
+
     result.reverse()
 
     for contest in result:
         embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
 
-        td = contest["duration"]
-
-        # days = td.days
-        hours = td.seconds // 3600
-        minutes = (td.seconds // 60) % 60
-        
-        duration = f"{hours} hr {minutes} min"
-
-        time_val = f"{contest['date']} at {convert_to_12hr(contest['time'])} ({duration})" 
+        time_val = f"{contest['date']} at {convert_to_12hr(contest['time'])} ({get_duration(contest['duration'])})" 
 
         embedVar.add_field(name="Time", value=time_val, inline=False)
         await ctx.send(embed=embedVar)
@@ -100,12 +94,19 @@ async def display_cf(ctx, result):
 
 async def display_cc(ctx, result):
 
-    await ctx.send(result[0])
+    await ctx.send("Codechef Contests:")
 
     for contest in result:
         embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
 
-        # time_val = ""
-        print(convert_to_date(contest["time"]))
-        # embedVar.add_field(name="Time", value=time_val, inline=False)
+        start_time = convert_to_date(contest["start_time"])
+        end_time = convert_to_date(contest["end_time"])
+
+        time = convert_to_12hr(start_time.strftime("%H:%M"))
+        date = start_time.strftime("%d/%m/%Y")
+        duration = get_duration(end_time - start_time)
+
+        time_val = f"{date} at {time} ({duration})" 
+            
+        embedVar.add_field(name="Time", value=time_val, inline=False)
         await ctx.send(embed=embedVar)
