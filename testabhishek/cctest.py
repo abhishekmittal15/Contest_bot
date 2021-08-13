@@ -7,8 +7,10 @@ future_contests=res['future_contests']
 results=[]
 for contest in future_contests:
     cc_contest={}
+    cc_contest['link']="https://www.codechef.com/"+contest['contest_code']
     cc_contest['name']=contest['contest_name']
     cc_contest['time']=contest['contest_start_date']
     cc_contest['dur']=contest['contest_end_date']
     results.append(cc_contest)
 
+print(results)

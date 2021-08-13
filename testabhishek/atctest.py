@@ -19,3 +19,4 @@ for i in contests:
     contest['eligibility']=fields[3].text
     result.append(contest)
 
+print(result)
