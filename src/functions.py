@@ -2,6 +2,7 @@ import discord
 import requests
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+import json
 
 from helpers import *
 
@@ -79,7 +80,9 @@ async def cc_contest():
 # display codeforces
 async def display_cf(ctx, result):
 
-    await ctx.send("Codeforces Contests:")
+    channel = get_channel(ctx, "cf")
+
+    await channel.send("Codeforces Contests:")
 
     result.reverse()
 
@@ -89,12 +92,14 @@ async def display_cf(ctx, result):
         time_val = f"{contest['date']} at {convert_to_12hr(contest['time'])} ({get_duration(contest['duration'])})" 
 
         embedVar.add_field(name="Time", value=time_val, inline=False)
-        await ctx.send(embed=embedVar)
+        await channel.send(embed=embedVar)
 
 
 async def display_cc(ctx, result):
 
-    await ctx.send("Codechef Contests:")
+    channel = get_channel(ctx, "cc")
+
+    await channel.send("Codechef Contests:")
 
     for contest in result:
         embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
@@ -109,4 +114,19 @@ async def display_cc(ctx, result):
         time_val = f"{date} at {time} ({duration})" 
             
         embedVar.add_field(name="Time", value=time_val, inline=False)
-        await ctx.send(embed=embedVar)
+        
+        await channel.send(embed=embedVar)
+
+
+def get_channel(ctx, code):
+
+    f = open('data.json', "r")
+    data = json.loads(f.read())
+    f.close()
+
+    if str(ctx.message.guild.id) in data["guilds"] and code in data["guilds"][str(ctx.message.guild.id)]:
+        for channel in ctx.guild.channels:
+            if str(channel.id) == data["guilds"][str(ctx.message.guild.id)][code]:
+                return channel
+    
+    return ctx.message.channel

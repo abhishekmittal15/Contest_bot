@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ext.commands.core import command
 from functions import *
 from dotenv import load_dotenv
+import threading
 load_dotenv()
 bot_token=os.getenv("DISCORD_TOKEN")
 bot=commands.Bot(command_prefix=";")
@@ -42,20 +43,38 @@ async def configure(ctx, website, channel):
     data = json.loads(f.read())
     f.close()
     
-    if str(ctx.message.guild.id) not in data:
-        data[str(ctx.message.guild.id)] = {}    
+    if str(ctx.message.guild.id) not in data["guilds"]:
+        data["guilds"][str(ctx.message.guild.id)] = {}    
 
-    data[str(ctx.message.guild.id)][website] = channel_id
+    data["guilds"][str(ctx.message.guild.id)][website] = channel_id
     
     with open('data.json', 'w') as fp:
         json.dump(data, fp)
 
+    await ctx.send(f"Updates for {site_list[website]} contests will be given in {channel}")
+
+
+def checkTime():
+    # This function runs periodically every 1 second
+    threading.Timer(5, checkTime).start()
+
+    now = datetime.now()
+
+    f = open('data.json', "r")
+    data = json.loads(f.read())
+    f.close()
+
+    data["last_updated"] = str(now.date())
+
+    with open('data.json', 'w') as fp:
+        json.dump(data, fp)
+
+checkTime()
+
 
 @bot.command(name="chan")
 async def configure(ctx, name):
-
     await ctx.message.guild.create_text_channel(name)
-
 
 @bot.listen('on_ready')
 async def initialisation():
