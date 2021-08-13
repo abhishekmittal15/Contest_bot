@@ -17,8 +17,8 @@ bot=commands.Bot(command_prefix=";")
 
 @bot.command(name="contests",help="Lists the upcoming codeforces contests")
 async def contests_info(ctx):
-    result_cf = await cf_contest()
-    await display_cf(ctx, result_cf)
+    result_ac = await cc_contest()
+    await display_cc(ctx, result_ac)
 
 
 @bot.listen('on_ready')

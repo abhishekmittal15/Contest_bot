@@ -3,6 +3,8 @@ import requests
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+from helpers import *
+
 # fetch info functions
 
 # codeforces
@@ -28,6 +30,7 @@ async def cf_contest():
         details={}
         details["name"]=name
         details["link"]="https://codeforces.com/contest/"+str(id)
+        details["date"] = f"{start_day}/{start_month}/{start_year}"
         details["time"]=f"{start_hour}:{start_minute}"
         details["duration"]=timedelta(seconds=dur)
         ret.append(details)
@@ -36,7 +39,7 @@ async def cf_contest():
     return ret
 
 # atcoder
-async def ac_contest(ctx):
+async def ac_contest():
     url="https://atcoder.jp/contests/"
 
     results=[]
@@ -66,7 +69,7 @@ async def cc_contest():
         cc_contest['link']="https://www.codechef.com/"+contest['contest_code']
         cc_contest['name']=contest['contest_name']
         cc_contest['time']=contest['contest_start_date']
-        cc_contest['dur']=contest['contest_end_date']
+        cc_contest['duration']=contest['contest_end_date']
         results.append(cc_contest)
     return results
 
@@ -76,11 +79,10 @@ async def cc_contest():
 # display codeforces
 async def display_cf(ctx, result):
 
-    # await ctx.send(result[0])
+    result.reverse()
 
     for contest in result:
-        embedVar = discord.Embed(title=contest["name"], color=0x00ff00)
-        embedVar.add_field(name="Time", value=contest["time"], inline=False)
+        embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
 
         td = contest["duration"]
 
@@ -90,5 +92,20 @@ async def display_cf(ctx, result):
         
         duration = f"{hours} hr {minutes} min"
 
-        embedVar.add_field(name="Duration", value=duration, inline=False)
+        time_val = f"{contest['date']} at {convert_to_12hr(contest['time'])} ({duration})" 
+
+        embedVar.add_field(name="Time", value=time_val, inline=False)
+        await ctx.send(embed=embedVar)
+
+
+async def display_cc(ctx, result):
+
+    await ctx.send(result[0])
+
+    for contest in result:
+        embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
+
+        # time_val = ""
+        print(convert_to_date(contest["time"]))
+        # embedVar.add_field(name="Time", value=time_val, inline=False)
         await ctx.send(embed=embedVar)
