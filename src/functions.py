@@ -28,7 +28,7 @@ async def cf_contest():
         details={}
         details["name"]=name
         details["link"]="https://codeforces.com/contest/"+str(id)
-        details["time"]=f"{start_hour}:{start_minute}"
+        details["time"]=f"{start_day}/{start_month}/{start_year} at {start_hour}:{start_minute}"
         details["duration"]=timedelta(seconds=dur)
         ret.append(details)
         if(startTime<today):
@@ -66,7 +66,7 @@ async def cc_contest():
         cc_contest['link']="https://www.codechef.com/"+contest['contest_code']
         cc_contest['name']=contest['contest_name']
         cc_contest['time']=contest['contest_start_date']
-        cc_contest['dur']=contest['contest_end_date']
+        cc_contest['duration']=contest['contest_end_date']
         results.append(cc_contest)
     return results
 
