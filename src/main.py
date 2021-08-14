@@ -10,8 +10,6 @@ load_dotenv()
 bot_token=os.getenv("DISCORD_TOKEN")
 bot=commands.Bot(command_prefix=";")
 
-site_list = {"cf":"codeforces", "cc":"codechef" ,"ac":"atcoder"}
-
 # Like in the client case, I had a on ready function which informed me if the bot client connected to the server or not, what is the similar function in the case of bot ?
 # @bot.command(name="")
 # async def on_ready():
@@ -20,11 +18,14 @@ site_list = {"cf":"codeforces", "cc":"codechef" ,"ac":"atcoder"}
 @bot.command(name="contests",help="Lists the upcoming codeforces contests")
 async def contests_info(ctx):
     
-    result_cf = await cf_contest()
-    await display_cf(ctx, result_cf)
+    # result_cf = await cf_contest()
+    # await display_contests(ctx, result_cf, "cf")
     
-    result_ac = await cc_contest()
-    await display_cc(ctx, result_ac)
+    # result_ac = await cc_contest()
+    # await display_contests(ctx, result_ac, "cc")
+
+    result_ac = await ac_contest()
+    await ctx.send(result_ac[0])
 
 
 @bot.command(name="conf", help="Configure the Channels to be used with different websites")

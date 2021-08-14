@@ -6,7 +6,11 @@ import json
 
 from helpers import *
 
+site_list = {"cf":"codeforces", "cc":"codechef" ,"ac":"atcoder"}
+
 # fetch info functions
+
+# name link date time duration
 
 # codeforces
 async def cf_contest():
@@ -32,11 +36,12 @@ async def cf_contest():
         details["name"]=name
         details["link"]="https://codeforces.com/contest/"+str(id)
         details["date"] = f"{start_day}/{start_month}/{start_year}"
-        details["time"]=f"{start_hour}:{start_minute}"
-        details["duration"]=timedelta(seconds=dur)
+        details["time"]= convert_to_12hr(f"{start_hour}:{start_minute}")
+        details["duration"]= get_duration(timedelta(seconds=dur))
         ret.append(details)
         if(startTime<today):
             break
+    ret = sort_by_time(ret)
     return ret
 
 # atcoder
@@ -56,6 +61,7 @@ async def ac_contest():
         contest['name']=fields[1].a.text
         contest['duration']=fields[2].text
         results.append(contest)
+    results = sort_by_time(results)
     return results
 
 # codechef
@@ -69,64 +75,37 @@ async def cc_contest():
         cc_contest={}
         cc_contest['link']="https://www.codechef.com/"+contest['contest_code']
         cc_contest['name']=contest['contest_name']
-        cc_contest['start_time']=contest['contest_start_date']
-        cc_contest['end_time']=contest['contest_end_date']
+        # cc_contest['start_time']=contest['contest_start_date']
+        # cc_contest['end_time']=contest['contest_end_date']
+        start_time = convert_to_date(contest["contest_start_date"])
+        end_time = convert_to_date(contest["contest_end_date"])
+
+        cc_contest["date"] = start_time.strftime("%d/%m/%Y")
+        cc_contest["time"] = convert_to_12hr(start_time.strftime("%H:%M"))
+        cc_contest["duration"] = get_duration(end_time - start_time)
+
         results.append(cc_contest)
+        
+    results = sort_by_time(results)
     return results
 
 
-# display functions
 
-# display codeforces
-async def display_cf(ctx, result):
+# display function
+async def display_contests(ctx, result, website):
 
-    channel = get_channel(ctx, "cf")
+    channel = get_channel(ctx, website)
+    
+    if not len(result):
+        await channel.send("No contests available.")
+        return
 
-    await channel.send("Codeforces Contests:")
-
-    result.reverse()
-
-    for contest in result:
-        embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
-
-        time_val = f"{contest['date']} at {convert_to_12hr(contest['time'])} ({get_duration(contest['duration'])})" 
-
-        embedVar.add_field(name="Time", value=time_val, inline=False)
-        await channel.send(embed=embedVar)
-
-
-async def display_cc(ctx, result):
-
-    channel = get_channel(ctx, "cc")
-
-    await channel.send("Codechef Contests:")
+    await channel.send(f"{site_list[website]} contests:")
 
     for contest in result:
+        time_val = f"{contest['date']} at {contest['time']} ({contest['duration']})" 
+
         embedVar = discord.Embed(description=f"[{contest['name']}]({contest['link']})", color=0x00ff00)
-
-        start_time = convert_to_date(contest["start_time"])
-        end_time = convert_to_date(contest["end_time"])
-
-        time = convert_to_12hr(start_time.strftime("%H:%M"))
-        date = start_time.strftime("%d/%m/%Y")
-        duration = get_duration(end_time - start_time)
-
-        time_val = f"{date} at {time} ({duration})" 
-            
         embedVar.add_field(name="Time", value=time_val, inline=False)
         
         await channel.send(embed=embedVar)
-
-
-def get_channel(ctx, code):
-
-    f = open('data.json', "r")
-    data = json.loads(f.read())
-    f.close()
-
-    if str(ctx.message.guild.id) in data["guilds"] and code in data["guilds"][str(ctx.message.guild.id)]:
-        for channel in ctx.guild.channels:
-            if str(channel.id) == data["guilds"][str(ctx.message.guild.id)][code]:
-                return channel
-    
-    return ctx.message.channel
