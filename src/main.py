@@ -18,14 +18,14 @@ bot=commands.Bot(command_prefix=";")
 @bot.command(name="contests",help="Lists the upcoming codeforces contests")
 async def contests_info(ctx):
     
-    # result_cf = await cf_contest()
-    # await display_contests(ctx, result_cf, "cf")
+    result_cf = await cf_contest()
+    await display_contests(ctx, result_cf, "cf")
     
-    # result_ac = await cc_contest()
-    # await display_contests(ctx, result_ac, "cc")
+    result_ac = await cc_contest()
+    await display_contests(ctx, result_ac, "cc")
 
     result_ac = await ac_contest()
-    await ctx.send(result_ac[0])
+    await display_contests(ctx,result_ac, "ac")
 
 
 @bot.command(name="conf", help="Configure the Channels to be used with different websites")
@@ -55,22 +55,22 @@ async def configure(ctx, website, channel):
     await ctx.send(f"Updates for {site_list[website]} contests will be given in {channel}")
 
 
-def checkTime():
-    # This function runs periodically every 1 second
-    threading.Timer(5, checkTime).start()
+# def checkTime():
+#     # This function runs periodically every 1 second
+#     threading.Timer(5, checkTime).start()
 
-    now = datetime.now()
+#     now = datetime.now()
 
-    f = open('data.json', "r")
-    data = json.loads(f.read())
-    f.close()
+#     f = open('data.json', "r")
+#     data = json.loads(f.read())
+#     f.close()
 
-    data["last_updated"] = str(now.date())
+#     data["last_updated"] = str(now.date())
 
-    with open('data.json', 'w') as fp:
-        json.dump(data, fp)
+#     with open('data.json', 'w') as fp:
+#         json.dump(data, fp)
 
-checkTime()
+# checkTime()
 
 
 @bot.command(name="chan")
